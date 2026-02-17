@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algorithm Reset Buddy</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Algorithm Reset Buddy</h1>
+
+    <section class="card">
+      <h2>Bubble Index</h2>
+      <div class="gauge-wrap">
+        <div class="gauge" id="gauge"></div>
+        <div class="gauge-value" id="bubbleValue">--%</div>
+      </div>
+      <p id="statusText">No feed analysis yet.</p>
+      <p id="termText" class="muted"></p>
+    </section>
+
+    <section class="card">
+      <h2>Settings</h2>
+      <label class="row">
+        <span>Auto exploration</span>
+        <input type="checkbox" id="autoExplore" />
+      </label>
+      <label class="row">
+        <span>Keyword expansion</span>
+        <input type="checkbox" id="interestExpansion" />
+      </label>
+      <label class="column">
+        <span>Sensitivity (<span id="sensitivityValue">80%</span>)</span>
+        <input type="range" min="50" max="95" step="5" id="sensitivity" />
+      </label>
+    </section>
+
+    <section class="card">
+      <h2>Expand Interest</h2>
+      <label class="column">
+        <span>Keywords (comma separated)</span>
+        <input type="text" id="keywords" placeholder="e.g. climate tech, history, jazz" />
+      </label>
+      <button id="searchBtn">Explore now</button>
+      <p id="searchResult" class="muted"></p>
+    </section>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>

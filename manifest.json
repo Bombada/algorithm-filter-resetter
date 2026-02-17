@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Algorithm Reset Buddy",
+  "description": "Reduce repetitive feed patterns and encourage diverse exploration.",
+  "version": "0.1.0",
+  "permissions": ["storage", "tabs", "activeTab"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://www.tiktok.com/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Algorithm Reset Buddy"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://www.tiktok.com/*",
+        "https://*/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
