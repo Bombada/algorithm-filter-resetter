@@ -13,6 +13,7 @@ A Chrome extension (Manifest v3) that helps users break out of repetitive recomm
 - **Bubble index visualization**
   - Extension badge shows the current bubble index percentage.
   - Popup displays a gauge, repetitive state message, and dominant terms.
+  - In-page floating indicator shows when analysis is running and updates on scroll-triggered recalculation.
 - **Interest expansion input**
   - Users can input comma-separated keywords.
   - "Explore now" opens a search on the active platform (YouTube/TikTok) or Google fallback.

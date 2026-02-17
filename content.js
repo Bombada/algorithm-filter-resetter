@@ -9,9 +9,13 @@ let settings = { ...DEFAULT_SETTINGS };
 let lastDigest = '';
 let lastActionAt = 0;
 let scanTimer = null;
+let scrollDebounceTimer = null;
+let analysisTick = 0;
+let indicatorEl = null;
 
 const ANALYSIS_INTERVAL_MS = 5000;
 const ACTION_COOLDOWN_MS = 15000;
+const SCROLL_DEBOUNCE_MS = 800;
 
 const TITLE_SELECTORS = [
   'h1',
@@ -134,22 +138,62 @@ function digestResult(result) {
   });
 }
 
-function runAnalysis() {
+function ensureIndicator() {
+  if (indicatorEl) {
+    return indicatorEl;
+  }
+
+  indicatorEl = document.createElement('div');
+  indicatorEl.id = 'algorithm-reset-buddy-indicator';
+  indicatorEl.style.position = 'fixed';
+  indicatorEl.style.right = '14px';
+  indicatorEl.style.bottom = '14px';
+  indicatorEl.style.zIndex = '2147483647';
+  indicatorEl.style.minWidth = '180px';
+  indicatorEl.style.padding = '8px 10px';
+  indicatorEl.style.borderRadius = '10px';
+  indicatorEl.style.background = 'rgba(18, 22, 33, 0.86)';
+  indicatorEl.style.color = '#ffffff';
+  indicatorEl.style.fontSize = '12px';
+  indicatorEl.style.fontFamily = 'Arial, sans-serif';
+  indicatorEl.style.lineHeight = '1.4';
+  indicatorEl.style.backdropFilter = 'blur(2px)';
+  indicatorEl.style.pointerEvents = 'none';
+  indicatorEl.textContent = 'Bubble index analyzer ready';
+  document.documentElement.appendChild(indicatorEl);
+  return indicatorEl;
+}
+
+function setIndicatorText(text, isAnalyzing = false) {
+  const el = ensureIndicator();
+  el.textContent = text;
+  el.style.outline = isAnalyzing ? '1px solid #79a8ff' : 'none';
+}
+
+function runAnalysis(trigger = 'interval') {
+  setIndicatorText('Analyzing feed pattern...', true);
   const feedItems = collectFeedTexts();
   const result = computeRepetition(feedItems);
   const digest = digestResult(result);
+  analysisTick += 1;
 
-  if (digest === lastDigest) {
-    return;
+  setIndicatorText(
+    `Bubble ${result.bubbleIndex}% · ${result.repetitive ? 'repetitive' : 'diverse'}\nUpdated #${analysisTick} (${trigger})`
+  );
+
+  const changed = digest !== lastDigest;
+  if (changed) {
+    lastDigest = digest;
   }
-
-  lastDigest = digest;
 
   chrome.runtime.sendMessage({
     type: 'analysisReport',
     payload: {
       url: location.href,
       feedSize: feedItems.length,
+      changed,
+      trigger,
+      analysisTick,
       ...result
     }
   });
@@ -192,8 +236,26 @@ function startAnalyzer() {
   runAnalysis();
 }
 
+function attachScrollAnalyzer() {
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (scrollDebounceTimer) {
+        clearTimeout(scrollDebounceTimer);
+      }
+
+      scrollDebounceTimer = setTimeout(() => {
+        runAnalysis('scroll');
+      }, SCROLL_DEBOUNCE_MS);
+    },
+    { passive: true }
+  );
+}
+
 chrome.storage.sync.get(DEFAULT_SETTINGS, (stored) => {
   settings = { ...DEFAULT_SETTINGS, ...stored };
+  ensureIndicator();
+  attachScrollAnalyzer();
   startAnalyzer();
 });
 
