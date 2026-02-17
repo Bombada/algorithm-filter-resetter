@@ -1,0 +1,95 @@
+:root {
+  color-scheme: light;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f7f7fa;
+  color: #1f2430;
+}
+
+.container {
+  width: 320px;
+  padding: 12px;
+}
+
+h1 {
+  font-size: 16px;
+  margin: 0 0 10px;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e7e8ef;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.gauge-wrap {
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
+  background: #eceef4;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.gauge {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #3d8f52, #d69b45, #d64545);
+  transition: width 0.2s ease;
+}
+
+.gauge-value {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+input[type='text'] {
+  border: 1px solid #d7d9e1;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+
+button {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  background: #3a64f7;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #2e52ce;
+}
+
+.muted {
+  color: #647087;
+  margin: 0;
+  font-size: 12px;
+}
