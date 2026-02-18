@@ -5,12 +5,22 @@ const DEFAULT_SETTINGS = {
   expansionKeywords: ''
 };
 
+const STATS_WINDOWS = {
+  hour: 60 * 60 * 1000,
+  day: 24 * 60 * 60 * 1000,
+  week: 7 * 24 * 60 * 60 * 1000
+};
+
 const bubbleValue = document.getElementById('bubbleValue');
 const gauge = document.getElementById('gauge');
 const statusText = document.getElementById('statusText');
 const termText = document.getElementById('termText');
 const sensitivityValue = document.getElementById('sensitivityValue');
 const searchResult = document.getElementById('searchResult');
+const keywordWindow = document.getElementById('keywordWindow');
+const statsMeta = document.getElementById('statsMeta');
+const statsList = document.getElementById('statsList');
+const statsDomain = document.getElementById('statsDomain');
 
 const autoExplore = document.getElementById('autoExplore');
 const interestExpansion = document.getElementById('interestExpansion');
@@ -19,6 +29,7 @@ const keywords = document.getElementById('keywords');
 const searchBtn = document.getElementById('searchBtn');
 
 let activeTab = null;
+let statsRefreshTimer = null;
 
 function setGauge(value) {
   const safe = Math.max(0, Math.min(100, value || 0));
@@ -79,6 +90,38 @@ function loadTabState(tabId) {
   });
 }
 
+function renderKeywordStats(stats) {
+  statsMeta.textContent = `Samples: ${stats.samples}`;
+
+  if (!stats.topKeywords.length) {
+    statsList.innerHTML = '<li>No keyword data yet.</li>';
+  } else {
+    statsList.innerHTML = stats.topKeywords
+      .map((item) => `<li><span>${item.keyword}</span><strong>${item.count}</strong></li>`)
+      .join('');
+  }
+
+  if (!stats.topDomains.length) {
+    statsDomain.textContent = 'Top pages: no data yet';
+  } else {
+    const top = stats.topDomains.map((item) => `${item.domain} (${item.count})`).join(', ');
+    statsDomain.textContent = `Top pages: ${top}`;
+  }
+}
+
+function refreshKeywordStats() {
+  const selectedWindow = STATS_WINDOWS[keywordWindow.value] || STATS_WINDOWS.hour;
+
+  chrome.runtime.sendMessage({ type: 'getKeywordStats', windowMs: selectedWindow }, (response) => {
+    if (!response?.ok || !response.stats) {
+      statsMeta.textContent = 'Stats unavailable right now.';
+      return;
+    }
+
+    renderKeywordStats(response.stats);
+  });
+}
+
 searchBtn.addEventListener('click', () => {
   const keywordRaw = keywords.value.trim();
   if (!keywordRaw) {
@@ -108,6 +151,8 @@ searchBtn.addEventListener('click', () => {
   el.addEventListener('change', saveSettings);
 });
 
+keywordWindow.addEventListener('change', refreshKeywordStats);
+
 (async function init() {
   chrome.storage.sync.get(DEFAULT_SETTINGS, async (stored) => {
     hydrateSettings({ ...DEFAULT_SETTINGS, ...stored });
@@ -117,5 +162,14 @@ searchBtn.addEventListener('click', () => {
       const state = await loadTabState(activeTab.id);
       updateStatus(state);
     }
+
+    refreshKeywordStats();
+    statsRefreshTimer = setInterval(refreshKeywordStats, 5000);
   });
 })();
+
+window.addEventListener('unload', () => {
+  if (statsRefreshTimer) {
+    clearInterval(statsRefreshTimer);
+  }
+});
