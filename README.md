@@ -17,6 +17,9 @@ A Chrome extension (Manifest v3) that helps users break out of repetitive recomm
 - **Interest expansion input**
   - Users can input comma-separated keywords.
   - "Explore now" opens a search on the active platform (YouTube/TikTok) or Google fallback.
+- **Live keyword trend stats**
+  - Stores detected dominant keywords in `chrome.storage.local` as you browse.
+  - Popup can summarize trends for the last 1 hour, 24 hours, or up to 7 days.
 - **Control panel settings**
   - Auto exploration toggle
   - Interest expansion toggle

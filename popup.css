@@ -11,7 +11,10 @@ body {
 
 .container {
   width: 320px;
+  max-height: 560px;
+  overflow-y: auto;
   padding: 12px;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -58,6 +61,7 @@ h2 {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
+  gap: 8px;
 }
 
 .column {
@@ -67,10 +71,35 @@ h2 {
   margin-bottom: 8px;
 }
 
-input[type='text'] {
+input[type='text'],
+select {
   border: 1px solid #d7d9e1;
   border-radius: 8px;
   padding: 6px 8px;
+  background: #fff;
+}
+
+.stats-list {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stats-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #edf0f6;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.stats-list strong {
+  color: #3a64f7;
 }
 
 button {
